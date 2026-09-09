@@ -32,10 +32,10 @@ export const libraries = {
                 id: 'philidor-01',
 
                 title:
-                    'Tour et Pion vs Tour - Les Blancs jouent et font nulle',
+                    'Tour et Pion vs Tour - Les Blancs jouent : nulle',
 
                 fen:
-                    '6k1/1p6/1P1p4/3p4/3Pp2p/4P2p/1K5P/8 w - - 0 1'
+                    '4k3/7R/r7/8/4PK2/8/8/8 w - - 0 1'
             },
 
             {
