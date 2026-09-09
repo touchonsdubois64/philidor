@@ -1,0 +1,732 @@
+* { box-sizing: border-box; }
+body { margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; background:#f3efe8; color:#2b2520; }
+.application { width:100%; max-width:950px; margin:0 auto; padding:20px; }
+h1 { margin:0 0 25px; text-align:center; font-size:1.8rem; color:#4a3022; }
+.library-control { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px; margin-bottom:20px; }
+.library-control label, .notation-control label { font-weight:bold; }
+.library-control select, .notation-control select { padding:7px 10px; border:1px solid #b9a998; border-radius:5px; background:#fff; font-size:.95rem; }
+.settings { width:100%; margin-bottom:20px; }
+.settings-side-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.mode-row { justify-content:center; }
+.mode-button { width:46px; height:46px; padding:0; border:1px solid transparent; border-radius:50%; background:transparent; font-size:2.05rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.mode-button:hover { background:#ece3d8; }
+.mode-button.selected { border-color:#8b6b55; background:#e7d8b8; box-shadow:0 0 0 2px rgba(139,107,85,.15); }
+.mode-analysis { font-size:2rem; }
+.bicolor-king { color:transparent; background:linear-gradient(90deg,#f8f8f8 0 50%,#171717 50% 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-stroke:1px #49382c; }
+.settings-engine-row { display:flex; align-items:center; justify-content:space-between; gap:30px; }
+.depth-control { display:flex; align-items:center; gap:10px; }
+.stockfish-fish { position:relative; width:46px; height:28px; display:inline-block; flex-shrink:0; }
+.fish-body { position:absolute; left:0; top:4px; width:34px; height:20px; border:2px solid #49382c; border-radius:55% 45% 45% 55%; background:#9aa7a8; }
+.fish-tail { position:absolute; right:0; top:7px; width:0; height:0; border-top:7px solid transparent; border-bottom:7px solid transparent; border-right:12px solid #49382c; transform:rotate(180deg); }
+.fish-eye { position:absolute; left:9px; top:10px; width:4px; height:4px; border-radius:50%; background:#2b2520; z-index:2; }
+#depth { width:160px; cursor:pointer; }
+#depth-value { min-width:25px; text-align:center; }
+.evaluation-control { display:flex; align-items:center; justify-content:flex-end; gap:10px; white-space:nowrap; }
+.evaluation-pill { width:26px; height:50px; padding:0; overflow:hidden; border:1px solid #6f6258; border-radius:14px; background:#fff; cursor:pointer; display:flex; flex-direction:column; box-shadow:0 1px 2px rgba(0,0,0,.15); }
+.evaluation-pill span { flex:1; width:100%; }
+.pill-black { background:#151515; }
+.pill-white { background:#fff; }
+.evaluation-pill.active { box-shadow:0 0 0 3px #e7d8b8; }
+#evaluation { min-width:55px; font-weight:bold; text-align:left; }
+.board-wrapper { --board-size:min(78vw,620px); display:flex; align-items:flex-start; justify-content:center; margin:20px auto 15px; }
+.rank-labels { width:22px; height:var(--board-size); display:grid; grid-template-rows:repeat(8,1fr); padding-right:5px; font-weight:bold; color:#5b4636; text-align:center; flex-shrink:0; }
+.rank-labels span { display:flex; align-items:center; justify-content:center; }
+.board-and-files { width:var(--board-size); display:flex; flex-direction:column; align-items:stretch; flex-shrink:0; }
+#board { position:relative; width:var(--board-size); height:var(--board-size); max-width:none; max-height:none; }
+#board .cg-wrap { width:100%; height:100%; }
+#board piece.white.pawn { background-image:url('/pieces/alpha/wP.svg') !important; }
+#board piece.black.pawn { background-image:url('/pieces/alpha/bP.svg') !important; }
+#board piece.white.knight { background-image:url('/pieces/alpha/wN.svg') !important; }
+#board piece.black.knight { background-image:url('/pieces/alpha/bN.svg') !important; }
+#board piece.white.bishop { background-image:url('/pieces/alpha/wB.svg') !important; }
+#board piece.black.bishop { background-image:url('/pieces/alpha/bB.svg') !important; }
+#board piece.white.rook { background-image:url('/pieces/alpha/wR.svg') !important; }
+#board piece.black.rook { background-image:url('/pieces/alpha/bR.svg') !important; }
+#board piece.white.queen { background-image:url('/pieces/alpha/wQ.svg') !important; }
+#board piece.black.queen { background-image:url('/pieces/alpha/bQ.svg') !important; }
+#board piece.white.king { background-image:url('/pieces/alpha/wK.svg') !important; }
+#board piece.black.king { background-image:url('/pieces/alpha/bK.svg') !important; }
+#board piece { background-size:contain !important; background-repeat:no-repeat !important; background-position:center !important; }
+.file-labels { width:var(--board-size); display:grid; grid-template-columns:repeat(8,1fr); margin-top:5px; font-weight:bold; color:#5b4636; text-align:center; }
+.file-labels span { display:flex; align-items:center; justify-content:center; }
+.turn-indicators { position:relative; width:26px; height:var(--board-size); margin-left:7px; flex-shrink:0; }
+.turn-circle { position:absolute; right:0; width:17px; height:17px; border-radius:50%; opacity:0; transition:opacity .15s; }
+.turn-circle.active { opacity:1; }
+.white-circle { background:#fff; border:1px solid #49382c; }
+.black-circle { background:#171717; border:1px solid #171717; }
+.turn-circle.at-top { top:calc(var(--board-size) / 16 - 8px); }
+.turn-circle.at-bottom { bottom:calc(var(--board-size) / 16 - 8px); }
+.information { width:100%; margin-top:10px; }
+.visually-hidden { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+.navigation { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:15px; }
+.nav-square { position:relative; display:flex; align-items:center; justify-content:center; width:40px; height:40px; padding:0; border:1px solid #a99786; border-radius:5px; background:#fff; color:#49382c; font-size:1.1rem; cursor:pointer; transition:background .15s, transform .1s; }
+.nav-square:hover:not(:disabled) { background:#ece3d8; }
+.nav-square:active:not(:disabled) { transform:scale(.95); }
+.nav-square:disabled { opacity:.4; cursor:default; }
+#restart { font-size:1.45rem; font-weight:bold; }
+.flip-button { flex-direction:column; gap:3px; }
+.flip-triangle-up { width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:9px solid #49382c; }
+.flip-triangle-down { width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent; border-top:9px solid #49382c; }
+#moves { width:100%; min-height:70px; margin:5px auto 18px; padding:14px 16px; border:1px solid #c7b8a9; border-radius:7px; background:#fff; line-height:1.9; font-size:1rem; }
+.move-number { font-weight:bold; color:#5b4636; }
+.move-text { display:inline; margin:0; padding:1px 2px; border:none; border-radius:3px; background:transparent; font-family:inherit; font-size:inherit; cursor:pointer; }
+.main-move { font-weight:bold; color:#2a211b; }
+.move-text:hover { background:#ece3d8; }
+.current-move { background:#e7d8b8; color:#2a211b; }
+.variation {
+    display: inline;
+    white-space: normal;
+    color: #2a211b;
+}
+
+/* Variantes : texte noir, surlignage hiérarchique */
+.variation-depth-1 {
+    color: #2a211b;
+    background: rgba(250, 245, 192, 1);
+    border-radius: 3px;
+    padding: 1px 3px;
+}
+
+.variation-depth-2 {
+    color: #2a211b;
+    background: rgba(192, 235, 250, 1);
+    border-radius: 3px;
+    padding: 1px 3px;
+}
+
+.variation-depth-3 {
+    color: #2a211b;
+    background: rgba(250, 221, 192, 1);
+    border-radius: 3px;
+    padding: 1px 3px;
+}
+
+.variation-depth-4 {
+    color: #2a211b;
+    background: rgba(210, 250, 212, 1);
+    border-radius: 3px;
+    padding: 1px 3px;
+}
+
+.variation-depth-5 {
+    color: #2a211b;
+    background: rgba(250, 200, 250, 1);
+    border-radius: 3px;
+    padding: 1px 3px;
+}
+
+.variation-move,
+.variation-depth-1 .variation-move,
+.variation-depth-2 .variation-move,
+.variation-depth-3 .variation-move,
+.variation-depth-4 .variation-move,
+.variation-depth-5 .variation-move {
+    color: #2a211b;
+    font-weight: normal;
+}
+.promote-variation { position:relative; display:inline-flex; align-items:center; justify-content:center; width:15px; height:18px; margin:0 5px 0 1px; padding:0; vertical-align:middle; border:none; background:transparent; cursor:pointer; }
+.promote-variation::before { content:""; display:block; width:7px; height:7px; border-top:3px solid #a83d36; border-left:3px solid #a83d36; transform:rotate(45deg); }
+.promote-variation:hover::before { border-color:#d14d43; }
+.notation-control { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:10px; padding-top:8px; }
+.promotion-modal[hidden] { display:none !important; }
+.promotion-modal { position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.35); }
+.promotion-box { min-width:280px; padding:20px 24px; border:1px solid #b9a998; border-radius:10px; background:#fff; box-shadow:0 8px 25px rgba(0,0,0,.25); text-align:center; }
+.promotion-title { margin-bottom:18px; font-weight:bold; font-size:1.05rem; color:#4a3022; }
+.promotion-choices { display:flex; align-items:center; justify-content:center; gap:10px; }
+.promotion-piece { display:flex; align-items:center; justify-content:center; width:55px; height:55px; padding:0; border:1px solid #b9a998; border-radius:7px; background:#f8f5f0; cursor:pointer; }
+.promotion-piece img { width:42px; height:42px; object-fit:contain; pointer-events:none; }
+.promotion-piece:hover { background:#e7d8b8; } .promotion-piece:active { transform:scale(.94); }
+.promotion-cancel { margin-top:18px; padding:6px 14px; border:1px solid #b9a998; border-radius:5px; background:#fff; cursor:pointer; }
+.promotion-cancel:hover { background:#ece3d8; }
+@media (max-width:700px) { .application{padding:15px;} h1{font-size:1.45rem;} .board-wrapper{--board-size:min(82vw,560px);} .library-control{flex-direction:column;align-items:stretch;} .library-control select{width:100%;} .settings-engine-row{flex-direction:column;align-items:stretch;gap:12px;} .depth-control,.evaluation-control{justify-content:center;} #moves{font-size:.95rem;padding:12px 13px;} }
+@media (max-width:480px) { .application{padding:10px;} h1{font-size:1.25rem;margin-bottom:18px;} .board-wrapper{--board-size:78vw;margin-top:15px;} .rank-labels{width:20px;padding-right:4px;font-size:.85rem;} .file-labels{font-size:.85rem;} .turn-indicators{width:21px;margin-left:4px;} .turn-circle{width:14px;height:14px;} .navigation{gap:5px;} .nav-square{width:36px;height:36px;font-size:1rem;} #restart{font-size:1.25rem;} .flip-triangle-up{border-left-width:7px;border-right-width:7px;border-bottom-width:8px;} .flip-triangle-down{border-left-width:7px;border-right-width:7px;border-top-width:8px;} #moves{line-height:1.85;font-size:.9rem;padding:10px 11px;} .notation-control{flex-wrap:wrap;} .promotion-box{min-width:auto;width:100%;max-width:350px;} .promotion-piece{width:50px;height:50px;} .promotion-piece img{width:38px;height:38px;} }
+
+
+/* ==================================================
+   COMMENTAIRES DE FIN DE PARTIE
+   ================================================== */
+
+.game-comment {
+
+    font-style: italic;
+
+    color: #7a6554;
+
+    white-space: nowrap;
+
+}
+
+
+/* ==================================================
+   NOTATION EN FIGURINES
+   ================================================== */
+
+.figurine-notation {
+
+    font-size: 1.35em !important;
+
+    line-height: 1 !important;
+
+}
+
+
+#notation option[value="french"],
+#notation option[value="international"] {
+
+    font-size: 1.05em;
+
+}
+
+
+#notation option[value="figurines"] {
+
+    font-size: 1.1em;
+
+}
+
+
+/* ==================================================
+   CORRECTION DES IMAGES SVG DYNAMIQUES
+   ================================================== */
+
+/*
+   Les trois boutons de choix du camp et l'image de
+   Stockfish sont créés dynamiquement par app.js.
+   Sans règles explicites pour ces balises <img>, certains
+   navigateurs affichent les SVG à leur taille intrinsèque.
+*/
+
+.mode-button {
+    overflow: hidden;
+}
+
+.mode-button .mode-piece-image {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    flex: 0 0 auto;
+}
+
+.stockfish-fish {
+    overflow: hidden;
+}
+
+.stockfish-fish .stockfish-image {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+}
+
+/* Le contenu SVG ne doit jamais dépasser son conteneur. */
+.mode-button svg,
+.stockfish-fish svg {
+    max-width: 100% !important;
+    max-height: 100% !important;
+}
+
+
+/* ==================================================
+   AJUSTEMENTS DE PROPORTIONS PAR RAPPORT AU BOUTON
+   ================================================== */
+.nav-square img {
+    width: 60%;
+    height: 60%;
+    object-fit: contain;
+}
+
+/* ==================================================
+   AJUSTEMENTS DE PROPORTIONS PAR RAPPORT À L'ÉCHIQUIER
+   ================================================== */
+
+/*
+   La même variable est utilisée pour tous les éléments
+   dont les dimensions doivent rester proportionnelles
+   à une case.
+*/
+.application {
+    --board-size: min(78vw, 620px);
+    --square-size: calc(var(--board-size) / 8);
+}
+
+/* L'échiquier reprend la variable globale. */
+.board-wrapper {
+    --board-size: var(--board-size);
+}
+
+/* --------------------------------------------------
+   BOUTONS DU CHOIX DU CAMP
+   -------------------------------------------------- */
+
+.mode-button {
+    width: var(--square-size);
+    height: var(--square-size);
+    padding: 0;
+}
+
+.mode-button .mode-piece-image {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* --------------------------------------------------
+   STOCKFISH ET ÉVALUATION
+   -------------------------------------------------- */
+
+.settings-engine-row {
+    width: var(--board-size);
+    max-width: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    align-items: center;
+    gap: 0;
+}
+
+/*
+   Colonne a : poisson.
+   Colonnes b à e : curseur et valeur de force.
+*/
+.depth-control {
+    grid-column: 1 / 6;
+    width: 100%;
+    display: grid;
+    grid-template-columns: var(--square-size) minmax(0, 1fr);
+    align-items: center;
+    gap: 0;
+}
+
+.stockfish-fish {
+    width: calc(var(--square-size) * .75);
+    height: calc(var(--square-size) * .75);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+.stockfish-fish .stockfish-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+
+.depth-control > .stockfish-fish + #depth,
+.depth-control #depth {
+    width: 100%;
+    min-width: 0;
+}
+
+/*
+   Le curseur et la valeur doivent ensemble occuper
+   exactement les quatre colonnes b-c-d-e.
+*/
+.depth-control {
+    position: relative;
+}
+
+#depth {
+    width: calc(100% - var(--square-size) - 32px);
+    margin: 0;
+}
+
+#depth-value {
+    min-width: 32px;
+    text-align: right;
+}
+
+/*
+   La gélule est centrée sur la colonne g.
+   Sa largeur est égale à 1/4 d'une case.
+*/
+.evaluation-control {
+    grid-column: 7 / 9;
+    justify-self: start;
+    width: var(--square-size);
+    margin-left: calc(var(--square-size) / 2 - var(--square-size) / 8);
+    gap: 8px;
+    transform: translateX(calc(-24px + var(--square-size) / 4));
+}
+
+.evaluation-pill {
+    width: calc(var(--square-size) / 4);
+    height: calc(var(--square-size) * .80);
+    flex: 0 0 auto;
+}
+
+/* --------------------------------------------------
+   INDICATEURS DU TRAIT
+   -------------------------------------------------- */
+
+/*
+   Diamètre : une demi-case.
+   Distance entre le bord de l'échiquier et le bord
+   du cercle : un cinquième de case.
+*/
+.turn-indicators {
+    width: calc(var(--square-size) * .7);
+    margin-left: calc(var(--square-size) * .2);
+}
+
+.turn-circle {
+    width: calc(var(--square-size) / 2);
+    height: calc(var(--square-size) / 2);
+    right: auto;
+    left: 0;
+}
+
+.turn-circle.at-top {
+    top: calc(var(--square-size) / 4);
+}
+
+.turn-circle.at-bottom {
+    bottom: calc(var(--square-size) / 4);
+}
+
+/* --------------------------------------------------
+   NAVIGATION : largeur des colonnes b à g
+   -------------------------------------------------- */
+
+.navigation {
+    width: calc(var(--square-size) * 6);
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: space-between;
+    gap: 0;
+    transform: translateX(calc(-24px + var(--square-size) / 4));
+}
+
+.nav-square {
+    width: calc(var(--square-size) * .82);
+    height: calc(var(--square-size) * .82);
+    font-size: calc(var(--square-size) * .34);
+}
+
+#restart {
+    font-size: calc(var(--square-size) * .50);
+}
+
+/* --------------------------------------------------
+   EXPORT PGN
+   -------------------------------------------------- */
+
+#export-pgn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.download-icon {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+}
+
+.download-icon::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 1px;
+    width: 1.5px;
+    height: 10px;
+    background: currentColor;
+}
+
+.download-icon::after {
+    content: "";
+    position: absolute;
+    left: 3px;
+    bottom: 1px;
+    width: 12px;
+    height: 6px;
+    border-left: 1.5px solid currentColor;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    border-radius: 0 0 2px 2px;
+}
+
+/* Pointe de la flèche. */
+.download-arrow-head {
+    position: absolute;
+    left: 5px;
+    top: 7px;
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg);
+}
+
+/* --------------------------------------------------
+   MOBILE
+   -------------------------------------------------- */
+
+@media (max-width: 700px) {
+    .application {
+        --board-size: min(82vw, 560px);
+    }
+
+    .settings-engine-row {
+        width: var(--board-size);
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        align-items: center;
+        gap: 0;
+    }
+
+    .depth-control,
+    .evaluation-control {
+        justify-content: initial;
+    }
+
+    .evaluation-control {
+        transform: translateX(calc(-24px + var(--square-size) / 4));
+    }
+}
+
+@media (max-width: 480px) {
+    .application {
+        --board-size: 78vw;
+    }
+
+    .settings-engine-row {
+        width: var(--board-size);
+    }
+
+    .navigation {
+        transform: translateX(calc(-24px + var(--square-size) / 4));
+    }
+
+    .nav-square {
+        width: calc(var(--square-size) * .82);
+        height: calc(var(--square-size) * .82);
+    }
+
+    .turn-indicators {
+        width: calc(var(--square-size) * .7);
+        margin-left: calc(var(--square-size) * .2);
+    }
+
+    .turn-circle {
+        width: calc(var(--square-size) / 2);
+        height: calc(var(--square-size) / 2);
+    }
+}
+
+
+/* ==================================================
+   CORRECTIONS DE MISE EN GRILLE
+   ================================================== */
+
+.board-wrapper {
+    --board-size: min(78vw, 620px);
+}
+
+.depth-control {
+    display: flex;
+    align-items: center;
+    grid-column: 1 / 6;
+}
+
+.stockfish-fish {
+    flex: 0 0 var(--square-size);
+}
+
+#depth {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+}
+
+#depth-value {
+    flex: 0 0 32px;
+}
+
+@media (max-width: 700px) {
+    .board-wrapper {
+        --board-size: min(82vw, 560px);
+    }
+}
+
+@media (max-width: 480px) {
+    .board-wrapper {
+        --board-size: 78vw;
+    }
+}
+
+
+/* ==================================================
+   FIGURINES SVG DANS LA NOTATION DES COUPS
+   ================================================== */
+
+/*
+   Le texte des coups et les coordonnées restent à la taille
+   normale de la notation. Les figurines SVG sont volontairement
+   plus petites (environ 1/4 de moins que la taille du texte) et
+   alignées sur la ligne de base.
+*/
+.move-text.figurine-notation {
+    display: inline;
+    font-size: inherit !important;
+    line-height: inherit !important;
+    vertical-align: baseline;
+}
+
+.notation-piece {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    margin: 0 .02em 0 0;
+    object-fit: contain;
+    vertical-align: -.18em;
+    pointer-events: none;
+}
+
+/* ==================================================
+   BOUTON D'EXPORT PGN : IMAGE FOURNIE
+   ================================================== */
+
+#export-pgn.export-pgn-button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-left: 12px;
+    min-height: 34px;
+    padding: 5px 9px;
+    border: 1px solid #b9a998;
+    border-radius: 5px;
+    background: #fff;
+    color: #49382c;
+    font-family: inherit;
+    font-size: .95rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#export-pgn.export-pgn-button:hover {
+    background: #ece3d8;
+}
+
+#export-pgn.export-pgn-button:active {
+    transform: scale(.97);
+}
+
+.export-pgn-icon {
+    display: block;
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    flex: 0 0 20px;
+}
+
+
+/* ==================================================
+   MENU DE NOTATION AVEC FIGURINES SVG ALPHA
+   ================================================== */
+
+.notation-native-select {
+    display: none !important;
+}
+
+.notation-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.notation-menu-button {
+    min-width: 132px;
+    min-height: 36px;
+    padding: 4px 8px 4px 10px;
+    border: 1px solid #b9a998;
+    border-radius: 5px;
+    background: #fff;
+    color: #2b2520;
+    font-family: inherit;
+    font-size: .95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.notation-menu-button:hover {
+    background: #ece3d8;
+}
+
+.notation-menu-preview {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    gap: 3px;
+    white-space: nowrap;
+}
+
+.notation-menu-piece {
+    display: block;
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.notation-menu-arrow {
+    flex: 0 0 auto;
+    font-size: .9em;
+    line-height: 1;
+}
+
+.notation-menu-list {
+    position: absolute;
+    z-index: 2000;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 100%;
+    padding: 4px;
+    border: 1px solid #b9a998;
+    border-radius: 5px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,.18);
+}
+
+.notation-menu-option {
+    width: 100%;
+    min-height: 34px;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 3px;
+    background: transparent;
+    color: #2b2520;
+    font-family: inherit;
+    font-size: .95rem;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+}
+
+.notation-menu-option:hover,
+.notation-menu-option.selected {
+    background: #ece3d8;
+}
+
+@media (max-width: 480px) {
+    .notation-menu-button {
+        min-width: 118px;
+    }
+
+    .notation-menu-piece {
+        width: 20px;
+        height: 20px;
+    }
+}

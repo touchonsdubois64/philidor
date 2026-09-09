@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TdB - Entraînement aux Finales</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chessground@10.1.1/assets/chessground.base.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chessground@10.1.1/assets/chessground.brown.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chessground@10.1.1/assets/chessground.alpha.css">
+  <script type="module" crossorigin src="/philidor/assets/index-fmuvQ1ur.js"></script>
+  <link rel="stylesheet" crossorigin href="/philidor/assets/index-9fALaloW.css">
+</head>
+<body>
+<div class="application">
+
+   
+
+    <div class="library-control">
+        <label for="library-select"></label>
+        <select id="library-select"></select>
+        <select id="position-select"></select>
+    </div>
+
+    <div class="settings">
+        <div class="settings-side-row mode-row" aria-label="Mode de jeu">
+            <button type="button" class="mode-button selected" data-mode="white" aria-pressed="true" title="Jouer avec les Blancs">♔</button>
+            <button type="button" class="mode-button" data-mode="black" aria-pressed="false" title="Jouer avec les Noirs">♚</button>
+            <button type="button" class="mode-button mode-analysis" data-mode="analysis" aria-pressed="false" title="Mode analyse : jouer les deux camps"><span class="bicolor-king">♚</span></button>
+        </div>
+
+        <div class="settings-engine-row">
+            <div class="depth-control">
+                <span class="stockfish-fish" aria-hidden="true">
+                    <span class="fish-body"></span><span class="fish-tail"></span><span class="fish-eye"></span>
+                </span>
+                <input type="range" id="depth" min="1" max="20" value="20" step="1" title="Force de Stockfish">
+                <strong id="depth-value">20</strong>
+            </div>
+
+            <div class="evaluation-control">
+                <button id="evaluation-toggle" class="evaluation-pill" type="button" aria-expanded="false" title="Afficher l’évaluation">
+                    <span class="pill-black"></span><span class="pill-white"></span>
+                </button>
+                <span id="evaluation">—</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="board-wrapper">
+        <div class="rank-labels">
+            <span>8</span><span>7</span><span>6</span><span>5</span>
+            <span>4</span><span>3</span><span>2</span><span>1</span>
+        </div>
+
+        <div class="board-and-files">
+            <div id="board"></div>
+            <div class="file-labels">
+                <span>a</span><span>b</span><span>c</span><span>d</span>
+                <span>e</span><span>f</span><span>g</span><span>h</span>
+            </div>
+        </div>
+
+        <div class="turn-indicators" aria-label="Camp au trait">
+            <span id="turn-white" class="turn-circle white-circle at-bottom" title="Blancs au trait"></span>
+            <span id="turn-black" class="turn-circle black-circle at-top" title="Noirs au trait"></span>
+        </div>
+    </div>
+
+    <div class="information">
+        <div id="status" class="visually-hidden"></div>
+
+        <div class="navigation">
+            <button id="restart" class="nav-square" title="Recommencer" aria-label="Recommencer"><img src="/philidor/images/restart.svg" alt="Recommencer"></button>
+            <button id="first" class="nav-square" title="Première position" aria-label="Première position">⏮</button>
+            <button id="previous" class="nav-square" title="Coup précédent" aria-label="Coup précédent">◀</button>
+            <button id="next" class="nav-square" title="Coup suivant" aria-label="Coup suivant">▶</button>
+            <button id="last" class="nav-square" title="Dernière position" aria-label="Dernière position">⏭</button>
+            <button id="flip" class="nav-square flip-button" title="Retourner l'échiquier" aria-label="Retourner l'échiquier"><span class="flip-triangle-up"></span><span class="flip-triangle-down"></span></button>
+        </div>
+
+        <div id="moves"></div>
+
+        <div class="notation-control">
+            <label for="notation">Notation :</label>
+            <select id="notation">
+                <option value="french">R D T F C</option>
+                <option value="figurines">♔♕♖♗♘</option>
+                <option value="international">K Q R B N</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div id="promotion-modal" class="promotion-modal" hidden aria-hidden="true">
+    <div class="promotion-box" role="dialog" aria-modal="true" aria-labelledby="promotion-title">
+        <div id="promotion-title" class="promotion-title">Choisissez la pièce</div>
+        <div id="promotion-choices" class="promotion-choices"></div>
+        <button id="promotion-cancel" class="promotion-cancel" type="button">Annuler</button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+</body>
+</html>
